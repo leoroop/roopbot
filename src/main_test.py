@@ -22,23 +22,33 @@ def get_token(path):
     return token
 
 
-def get_image_url():
+def get_image_url(animal):
     allowed_extension = ['jpg', 'jpeg', 'png']
     file_extension = ''
     while file_extension not in allowed_extension:
-        url = get_url()
+        url = get_url(animal)
         file_extension = re.search("([^.]*)$", url).group(1).lower()
     return url
 
 
-def get_url():
-    contents = requests.get('https://random.dog/woof.json').json()
-    url = contents['url']
+def get_url(animal):
+    if animal == "dog":
+        contents = requests.get('https://random.dog/woof.json').json()
+        url = contents['url']
+    elif animal == "cat":
+        contents = requests.get('http://aws.random.cat/meow').json()
+        url = contents['file']
     return url
 
 
 def bop(update, context):
-    url = get_image_url()
+    url = get_image_url("dog")
+    chat_id = update.message.chat_id
+    context.bot.send_photo(chat_id=chat_id, photo=url)
+
+
+def mao(update, context):
+    url = get_image_url("cat")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
@@ -53,6 +63,7 @@ def main(token_path):
     updater = Updater(token)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('bop', bop))
+    dp.add_handler(CommandHandler('mao', mao))
     updater.start_polling()
     updater.idle()
 
