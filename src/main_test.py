@@ -6,8 +6,10 @@ import argparse
 
 DEBUG = False
 
+
 def get_token(path):
-    print(path)
+    if DEBUG:
+        print(path)
     try:
         with open(path, "r") as token_file:
             token = token_file.read()
@@ -45,7 +47,8 @@ def main(token_path):
     token = get_token(token_path)
 
     if DEBUG:
-        print(token)
+        pass
+        # print(token)
 
     updater = Updater(token)
     dp = updater.dispatcher
