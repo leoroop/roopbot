@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import requests
 import re
 import sys
@@ -53,6 +53,12 @@ def mao(update, context):
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
+def new_member_entered(update, context):
+    for member in update.message.new_chat_members:
+        msg = "Ciao {}".format(member.username)
+        update.message.reply_text(msg)
+
+
 def main(token_path):
     token = get_token(token_path)
 
@@ -64,6 +70,7 @@ def main(token_path):
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('bop', bop))
     dp.add_handler(CommandHandler('mao', mao))
+    dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, new_member_entered))
     updater.start_polling()
     updater.idle()
 
