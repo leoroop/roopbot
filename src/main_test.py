@@ -55,7 +55,7 @@ def mao(update, context):
 
 def new_member_entered(update, context):
     for member in update.message.new_chat_members:
-        msg = "Ciao {}".format(member.username)
+        msg = "Ciao {} , benvenut*! ".format(member.username)
         update.message.reply_text(msg)
 
 
