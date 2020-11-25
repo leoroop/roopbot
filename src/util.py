@@ -54,8 +54,6 @@ def build_menu(buttons,
 def rate_limit_tracker(update: Update, context: CallbackContext):
     data = context.chat_data.get('rate_limit', {})
 
-    print(data)
-
     for key in data.keys():
         data[key] += 1
 
