@@ -3,6 +3,8 @@ import requests
 import re
 import sys
 import argparse
+from util import rate_limit, rate_limit_tracker
+
 
 DEBUG = False
 
@@ -38,17 +40,29 @@ def get_url(animal):
     elif animal == "cat":
         contents = requests.get('http://aws.random.cat/meow').json()
         url = contents['file']
+    elif animal == "duck":
+        contents = requests.get('https://random-d.uk/api/v2/quack').json()
+        url = contents['url']
     return url
 
 
+@rate_limit
 def bop(update, context):
     url = get_image_url("dog")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
+@rate_limit
 def mao(update, context):
     url = get_image_url("cat")
+    chat_id = update.message.chat_id
+    context.bot.send_photo(chat_id=chat_id, photo=url)
+
+
+@rate_limit
+def quack(update, context):
+    url = get_image_url("duck")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
@@ -68,8 +82,12 @@ def main(token_path):
 
     updater = Updater(token)
     dp = updater.dispatcher
+
+    rate_limit_tracker_handler = MessageHandler(~Filters.command, rate_limit_tracker)
+    dp.add_handler(rate_limit_tracker_handler, group=-1)
     dp.add_handler(CommandHandler('bop', bop))
     dp.add_handler(CommandHandler('mao', mao))
+    dp.add_handler(CommandHandler('quack', mao))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, new_member_entered))
     updater.start_polling()
     updater.idle()
