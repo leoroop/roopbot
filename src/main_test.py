@@ -46,23 +46,26 @@ def get_url(animal):
     return url
 
 
-
+@rate_limit
 def bop(update, context):
     url = get_image_url("dog")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
+@rate_limit
 def mao(update, context):
     url = get_image_url("cat")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
+@rate_limit
 def quack(update, context):
     url = get_image_url("duck")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
+    print(chat_id)
 
 
 def new_member_entered(update, context):
@@ -82,7 +85,7 @@ def main(token_path):
     dp = updater.dispatcher
 
     rate_limit_tracker_handler = MessageHandler(~Filters.command, rate_limit_tracker)
-    dp.add_handler(rate_limit_tracker_handler, group=0)
+    dp.add_handler(rate_limit_tracker_handler, group=-1)
     dp.add_handler(CommandHandler('bop', bop))
     dp.add_handler(CommandHandler('mao', mao))
     dp.add_handler(CommandHandler('quack', quack))
