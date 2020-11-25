@@ -87,7 +87,7 @@ def main(token_path):
     dp.add_handler(rate_limit_tracker_handler, group=-1)
     dp.add_handler(CommandHandler('bop', bop))
     dp.add_handler(CommandHandler('mao', mao))
-    dp.add_handler(CommandHandler('quack', mao))
+    dp.add_handler(CommandHandler('quack', quack))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, new_member_entered))
     updater.start_polling()
     updater.idle()
