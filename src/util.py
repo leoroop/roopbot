@@ -51,6 +51,11 @@ def build_menu(buttons,
     return menu
 
 
+def set_rate_limit(rate):
+    global RATE_LIMIT_SPACING
+    RATE_LIMIT_SPACING = rate
+
+
 def rate_limit_tracker(update: Update, context: CallbackContext):
     data = context.chat_data.get('rate_limit', {})
 

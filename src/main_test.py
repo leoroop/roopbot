@@ -3,7 +3,7 @@ import requests
 import re
 import sys
 import argparse
-from util import rate_limit, rate_limit_tracker
+from util import rate_limit, rate_limit_tracker, set_rate_limit
 
 
 DEBUG = False
@@ -65,7 +65,26 @@ def quack(update, context):
     url = get_image_url("duck")
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
-    print(chat_id)
+
+
+def set_new_rate_limit(update, context):
+    # chat_id = update.message.chat_id
+    # user_id = update.message.from_user.id
+    # member = context.bot.get_chat_member(chat_id, user_id)
+    username = update.message.from_user.username
+    if username == "leoroop":
+        ratelimit = int(update.message.text.split(" ")[1])
+        set_rate_limit(ratelimit)
+        update.message.reply_text("Limitatore impostato a %d" % ratelimit)
+    else:
+        update.message.reply_text("Porta pazienza 😢, per ora solo il mio creatore può settare limitatore. Questa funzione diventerà (non troppo) presto disponibile per gli amministratori dei gruppi. 👀")
+
+    # if member["status"] in ["creator", "administrator"]:
+    #     ratelimit = int(update.message.text.split(" ")[1])
+    #     set_rate_limit(ratelimit)
+    #     update.message.reply_text("Limitatore impostato a %d" % ratelimit)
+    # else:
+    #     update.message.reply_text("Ci hai provato, ma solo un admin può settare il limitatore 🤷🏻‍♂️")
 
 
 def new_member_entered(update, context):
@@ -89,6 +108,7 @@ def main(token_path):
     dp.add_handler(CommandHandler('bop', bop))
     dp.add_handler(CommandHandler('mao', mao))
     dp.add_handler(CommandHandler('quack', quack))
+    dp.add_handler(CommandHandler('ratelimit', set_new_rate_limit))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, new_member_entered))
     updater.start_polling()
     updater.idle()
